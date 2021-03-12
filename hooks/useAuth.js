@@ -78,6 +78,38 @@ const useAuthProvider = () => {
       })
   }
 
+  const addWorkout = (data) => {
+    return db
+      .collection('workouts')
+      .add({
+        title: data.title,
+        details: data.details,
+        date: data.Datepicker,
+        user: user.uid,
+      })
+      .then((docRef) => {
+        console.log('Data added: ', docRef.id)
+      })
+      .catch((error) => {
+        console.log(error.message)
+      })
+  }
+
+  const getWorkouts = () => {
+    var workouts = []
+    return db
+      .collection('workouts')
+      .where('user', '==', user.uid)
+      .onSnapshot((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, ' => ', doc.data())
+          workouts.push(doc.data())
+        })
+      })
+    return workouts
+  }
+
   const handleAuthStateChanged = (user) => {
     setUser(user)
     if (user) {
@@ -97,5 +129,7 @@ const useAuthProvider = () => {
     signIn,
     signOut,
     sendPasswordResetEmail,
+    addWorkout,
+    getWorkouts,
   }
 }
